@@ -1,2 +1,37 @@
 [server]
-ports = { start = 2000, end = 3000}
+hostname = "sample_node"                         # Hostname or identifier of this node
+listen_port = { start = 2000, end = 2004 }       # Range of ports this node will expose
+max_connections = 100                            # Maximum concurrent TCP connections
+cleanup_interval = 1800                          # Time in seconds to kill least-used process
+
+[peers]
+
+# Peer 1 - simple port range
+[peers.node1]
+host = "192.168.1.2"                             # IP/Hostname of peer
+accept_ports = { start = 4000, end = 4002 }      # Peer will accept requests on these ports
+processes = ["uuid-1", "uuid-2", "uuid-3"]       # UUIDs of processes running on this peer
+
+# Peer 2 - mapped processes
+[peers.node2]
+host = "192.168.1.3"
+accept_ports = { start = 5000, end = 5001 }
+processes = ["uuid-4","uuid-5"]
+
+[processes]
+
+# Map the processes on the peer node. The leader node will get the processes dynamically from the peer node
+# Process mapped to port 4000
+[processes."4000"]
+uuid = "uuid-1"
+command = "/usr/bin/my_service --port ${PORT}"   # Placeholder for dynamic port substitution
+args = ["--mode", "production"]
+max_instances = 2
+
+# Another process mapped to port 4001
+[processes."4001"]
+uuid = "uuid-2"
+command = "/usr/bin/another_service --port ${PORT}"
+args = ["--verbose"]
+max_instances = 3
+
