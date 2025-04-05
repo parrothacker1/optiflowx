@@ -3,35 +3,41 @@ hostname = "sample_node"                         # Hostname or identifier of thi
 listen_port = { start = 2000, end = 2004 }       # Range of ports this node will expose
 max_connections = 100                            # Maximum concurrent TCP connections
 cleanup_interval = 1800                          # Time in seconds to kill least-used process
+# Mapping of ports on this node to specific process UUIDs
+mapping = [
+  { port = 2000, process = "uuid-1" },           # Port 2000 is mapped to process with UUID "uuid-1"
+  { port = 2001, process = "uuid-2" },           # Port 2001 is mapped to process with UUID "uuid-2"
+  { port = 2002, process = "uuid-3" }            # Port 2002 is mapped to process with UUID "uuid-3"
+]
 
 [peers]
-
-# Peer 1 - simple port range
+# Peer 1 - accepts connections on a simple port range and hosts specific processes
 [peers.node1]
-host = "192.168.1.2"                             # IP/Hostname of peer
-accept_ports = { start = 4000, end = 4002 }      # Peer will accept requests on these ports
-processes = ["uuid-1", "uuid-2", "uuid-3"]       # UUIDs of processes running on this peer
+host = "192.168.1.2"                             # IP/Hostname of peer node1
+accept_ports = { start = 4000, end = 4002 }      # Peer node1 listens on ports 4000–4002
+processes = ["uuid-1", "uuid-2", "uuid-3"]       # These UUID-identified processes are available on node1
 
-# Peer 2 - mapped processes
+# Peer 2 - accepts connections and has its own processes
 [peers.node2]
-host = "192.168.1.3"
-accept_ports = { start = 5000, end = 5001 }
-processes = ["uuid-4","uuid-5"]
+host = "192.168.1.3"                             # IP/Hostname of peer node2
+accept_ports = { start = 5000, end = 5001 }      # Peer node2 listens on ports 5000–5001
+processes = ["uuid-4", "uuid-5"]                 # These processes are hosted on node2
 
 [processes]
 
-# Map the processes on the peer node. The leader node will get the processes dynamically from the peer node
-# Process mapped to port 4000
-[processes."4000"]
-uuid = "uuid-1"
-command = "/usr/bin/my_service --port ${PORT}"   # Placeholder for dynamic port substitution
-args = ["--mode", "production"]
-max_instances = 2
+# Mapping of each port (on peers) to specific process details
 
-# Another process mapped to port 4001
+# Process that will be run when port 4000 is triggered
+[processes."4000"]
+uuid = "uuid-1"                                  # Unique identifier of the process
+command = "/usr/bin/my_service --port ${PORT}"   # Command to run, with dynamic port substitution
+args = ["--mode", "production"]                  # Additional arguments for the process
+max_instances = 2                                # Maximum number of instances allowed
+
+# Process that will be run when port 4001 is triggered
 [processes."4001"]
-uuid = "uuid-2"
-command = "/usr/bin/another_service --port ${PORT}"
-args = ["--verbose"]
-max_instances = 3
+uuid = "uuid-2"                                  # Unique identifier of the process
+command = "/usr/bin/another_service --port ${PORT}" # Command with dynamic port substitution
+args = ["--verbose"]                             # Additional arguments
+max_instances = 3                                # Maximum number of instances allowed
 
