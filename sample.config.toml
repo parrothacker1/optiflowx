@@ -9,6 +9,7 @@ mapping = [
   { port = 2001, process = "uuid-2" },           # Port 2001 is mapped to process with UUID "uuid-2"
   { port = 2002, process = "uuid-3" }            # Port 2002 is mapped to process with UUID "uuid-3"
 ]
+processes = [ "uuid-6", "uuid-7"]                # Some processes can be executed on the leader node
 
 [peers]
 # Peer 1 - accepts connections on a simple port range and hosts specific processes
@@ -28,16 +29,16 @@ processes = ["uuid-4", "uuid-5"]                 # These processes are hosted on
 # Mapping of each port (on peers) to specific process details
 
 # Process that will be run when port 4000 is triggered
-[processes."4000"]
+[processes.1]
 uuid = "uuid-1"                                  # Unique identifier of the process
 command = "/usr/bin/my_service --port ${PORT}"   # Command to run, with dynamic port substitution
 args = ["--mode", "production"]                  # Additional arguments for the process
 max_instances = 2                                # Maximum number of instances allowed
 
 # Process that will be run when port 4001 is triggered
-[processes."4001"]
-uuid = "uuid-2"                                  # Unique identifier of the process
+[processes.2]
+uuid = "uuid-2"                                     # Unique identifier of the process
 command = "/usr/bin/another_service --port ${PORT}" # Command with dynamic port substitution
-args = ["--verbose"]                             # Additional arguments
-max_instances = 3                                # Maximum number of instances allowed
+args = ["--verbose"]                                # Additional arguments
+max_instances = 3                                   # Maximum number of instances allowed
 

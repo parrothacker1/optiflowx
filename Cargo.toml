@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-serde = "1.0.219"
+env_logger = "0.11.8"
+log = "0.4.27"
+serde = { version = "1.0.219", features= ["derive"] }
 tokio = { version = "1.44.1", features = ["macros", "net"] }
 toml = "0.8.20"
